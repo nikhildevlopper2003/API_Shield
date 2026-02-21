@@ -1,0 +1,17 @@
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Node
+node_modules/
+gateway/node_modules/
+worker/node_modules/
+
+# Logs
+logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

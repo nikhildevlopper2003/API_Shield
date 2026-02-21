@@ -1,0 +1,27 @@
+{
+  
+  "name": "apishield",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix gateway\" \"npm run dev --prefix worker\"",
+    "start": "concurrently \"npm start --prefix gateway\" \"npm start --prefix worker\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.0"
+  }
+,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nikhildevlopper2003/API_Shield.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nikhildevlopper2003/API_Shield/issues"
+  },
+  "homepage": "https://github.com/nikhildevlopper2003/API_Shield#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
