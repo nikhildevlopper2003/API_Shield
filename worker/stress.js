@@ -2,7 +2,7 @@
 import { createClient } from "redis";
 
 const redis = createClient({
-  url: "rediss://default:AUXiAAIncDExZTU1NzhkYjY1MzQ0MGM5YjJlMDJlNzhiOTQ0Zjk2Y3AxMTc4OTA@prompt-grackle-17890.upstash.io:6379"
+  url: "redis_url"
 });
 
 await redis.connect();
