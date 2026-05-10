@@ -1,0 +1,19 @@
+node_modules
+.env
+dist
+build
+coverage
+logs
+*.log
+
+# Docker
+docker-data
+mongo-data
+redis-data
+
+# OS
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode
