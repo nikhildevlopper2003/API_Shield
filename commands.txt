@@ -1,0 +1,34 @@
+docker compose up --build
+
+
+
+Test protceted-iwr `
+  -Uri "http://localhost:3000/gateway/test" `
+  -Headers @{ "x-api-key" = "test-key-123" }
+
+
+
+  stress testing- 1..120 | ForEach-Object {
+  Start-Job {
+    iwr `
+      -Uri "http://localhost:3000/gateway/test" `
+      -Headers @{ "x-api-key" = "test-key-123" }
+  }
+}
+
+Load testing -autocannon -c 50 -d 20 "http://localhost:3000/gateway/test" -H "x-api-key=test-key-123"
+
+
+Blocked -while ($true) {
+  try {
+    iwr `
+      -Uri "http://localhost:3000/gateway/test" `
+      -Headers @{ "x-api-key" = "test-key-123" } `
+      -UseBasicParsing
+
+    Write-Host "Request Sent"
+  }
+  catch {
+    Write-Host "BLOCKED OR RATE LIMITED"
+  }
+}

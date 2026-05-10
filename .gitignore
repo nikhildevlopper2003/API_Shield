@@ -1,19 +1,11 @@
-node_modules
+node_modules/
+dist/
 .env
-dist
-build
-coverage
-logs
+*.local
 *.log
-
-# Docker
-docker-data
-mongo-data
-redis-data
-
-# OS
+logs/
+coverage/
 .DS_Store
-Thumbs.db
-
-# VS Code
-.vscode
+*.swp
+*.swo
+.nyc_output/

@@ -1,0 +1,32 @@
+version: '3.9'
+
+# Development overrides — use with:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+services:
+  gateway:
+    build:
+      target: development
+    volumes:
+      - ./gateway-service/src:/app/src:ro
+    environment:
+      NODE_ENV: development
+      LOG_LEVEL: debug
+    command: npm run dev
+
+  analytics:
+    volumes:
+      - ./analytics-service/src:/app/src:ro
+    environment:
+      NODE_ENV: development
+      LOG_LEVEL: debug
+    command: npm run dev
+
+  frontend:
+    build:
+      target: development
+    volumes:
+      - ./frontend-dashboard/src:/app/src:ro
+    ports:
+      - "5173:5173"
+    command: npm run dev
