@@ -1,32 +1,4 @@
 services:
-  # ── MongoDB ────────────────────────────────────────────────────────────────
-  mongodb:
-    image: mongo:7.0
-    container_name: apishield-mongodb
-    restart: unless-stopped
-    volumes:
-      - mongodb_data:/data/db
-      - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/init.js:ro
-    environment:
-      MONGO_INITDB_DATABASE: apishield
-    ports:
-      - "27018:27017"
-    networks:
-      - apishield-net
-
-  # ── Redis ──────────────────────────────────────────────────────────────────
-  redis:
-    image: redis:7.2-alpine
-    container_name: apishield-redis
-    restart: unless-stopped
-    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru --save ""
-    volumes:
-      - redis_data:/data
-    ports:
-      - "6379:6379"
-    networks:
-      - apishield-net
-
   # ── Gateway Service ────────────────────────────────────────────────────────
   gateway:
     build:
@@ -34,24 +6,33 @@ services:
       target: production
     container_name: apishield-gateway
     restart: unless-stopped
-    depends_on:
-      - mongodb
-      - redis
     environment:
       NODE_ENV: production
       PORT: 3000
-      MONGODB_URI: mongodb://mongodb:27017/apishield
-      REDIS_URL: redis://redis:6379
+
+      # External Cloud Services
+      MONGODB_URI: ${MONGODB_URI}
+      REDIS_URL: ${REDIS_URL}
+
+      # Gateway Config
       EVENT_QUEUE_KEY: event_queue
       FRONTEND_URL: http://localhost
-      ADMIN_SECRET_KEY: ${ADMIN_SECRET_KEY:-change_me}
+
+      # Security
+      ADMIN_SECRET_KEY: ${ADMIN_SECRET_KEY}
       ADMIN_API_KEY: ${ADMIN_API_KEY}
       TEST_API_KEY: ${TEST_API_KEY}
+
+      # Rate Limiting
       DEFAULT_RATE_LIMIT: ${DEFAULT_RATE_LIMIT:-100}
       DEFAULT_WINDOW_SECONDS: ${DEFAULT_WINDOW_SECONDS:-60}
+
+      # Logging
       LOG_LEVEL: ${LOG_LEVEL:-info}
+
     ports:
       - "3000:3000"
+
     networks:
       - apishield-net
 
@@ -63,21 +44,29 @@ services:
     container_name: apishield-analytics
     restart: unless-stopped
     depends_on:
-      - mongodb
-      - redis
+      - gateway
+
     environment:
       NODE_ENV: production
       PORT: 3001
-      MONGODB_URI: mongodb://mongodb:27017/apishield
-      REDIS_URL: redis://redis:6379
+
+      # External Cloud Services
+      MONGODB_URI: ${MONGODB_URI}
+      REDIS_URL: ${REDIS_URL}
+
+      # Analytics Config
       EVENT_QUEUE_KEY: event_queue
       FRONTEND_URL: http://localhost
+
       BATCH_SIZE: 50
       POLL_INTERVAL_MS: 500
       SNAPSHOT_INTERVAL_MS: 10000
+
       LOG_LEVEL: ${LOG_LEVEL:-info}
+
     ports:
       - "3001:3001"
+
     networks:
       - apishield-net
 
@@ -89,20 +78,20 @@ services:
       args:
         VITE_GATEWAY_URL: http://localhost:3000
         VITE_ANALYTICS_URL: http://localhost:3001
-        VITE_ADMIN_KEY: ${ADMIN_SECRET_KEY:-change_me}
+        VITE_ADMIN_KEY: ${ADMIN_SECRET_KEY}
+
     container_name: apishield-frontend
     restart: unless-stopped
+
     depends_on:
       - gateway
       - analytics
+
     ports:
       - "80:80"
+
     networks:
       - apishield-net
-
-volumes:
-  mongodb_data:
-  redis_data:
 
 networks:
   apishield-net:
